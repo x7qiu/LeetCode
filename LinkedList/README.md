@@ -1,4 +1,6 @@
-# LinkedList
+# Linked List
+
+## Intro
 
 Most linked list algorithms are logially straightforward. The main difficult lies in that fact that when working on a node in the list, often times you also **need to have reference to the node just before it or after it**. Take for example a simple case of deleting the node `B` from list `A->B->C`. After you identify where `B` is, you still need to keep a reference of `A` in order to write `A->next = B->next`.
 
@@ -10,12 +12,62 @@ This brings code complexity, as you need to keep track of more variables and tre
 
 1. **Design the inside of `while` loop**
 
-   In this step we ignore edge cases and focus on how to modify the body of the list. A `cur` node, initialized as the `head` node before we enter the loop, will always be the current node that we are working on.
+   In this step we ignore edge cases and focus on the body of the list. A `cur` node, initialized as the `head` node before entering the loop, will always be the current node that we are working on.
 
 2. **Decide the break point for the loop**
 
-   This will usually be when our `cur` node reaches `NULL`, but exceptions exsist. For example, if we referenced`cur->next->value` in the loop, we must break out of the loop when `cur->next` is `NULL`.
+   Once we have the inside of the loop from above, we break out when one of the referenced node reaches a `NULL` state. 
+
+   This will usually be the `cur` node, but exceptions exsist. For example, if we referenced`cur->next->value` in the loop, we must break out of the loop when `cur->next` is `NULL`.
 
 3. **Handle edge cases**
 
-   The `head` node usually needs to be handled seperately.
+   The `head` node often needs to be handled seperately because there is no node before it.
+
+## When `pre` node is referenced 
+
+Sometimes you need to keep a reference to the node immediately before the `cur` node you are working on, such as when removing all elements of a particular value from the list. The while loop would look like
+
+```c
+while (cur){
+  if(cur->val == 666){
+    pre->next = cur->next;		// deleting cur node from the list
+    cur = cur->next;
+  }
+  else{
+    pre = pre->next;
+    cur = cur->next;
+  }
+}
+```
+
+However, what if the head node itslef needs to be deleted? Since the head node has no `pre` node before it, we'd have to either adjust the loop logic (which make the code less intuitive) or handle it seperately (which makes the code longer). 
+
+It's a common trick to construct a dummy node to handle such edge cases. The idea is to artificially create a node before the head node so that the loop logic stays consistent, and returns whatever is after the dummy node when we are done. 
+
+#### 203. Remove Linked List Elements
+
+**Input**: 1->2->6->3->4->5->6, val = 6   
+
+**Output**: 1->2->3->4->5
+
+```c
+struct ListNode* removeElements(struct ListNode* head, int val) {
+    struct ListNode dummy = {-1, head};
+    struct ListNode* pre = &dummy;
+    struct ListNode* cur = head;
+    
+    while(cur){
+        if(cur->val == val){
+          pre->next = cur->next;
+        	cur = cur->next;
+        }
+        else{
+          pre = pre->next;
+          cur = cur->next;
+        }
+    }
+    return dummy.next;
+}
+```
+
