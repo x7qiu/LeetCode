@@ -24,9 +24,9 @@ This brings code complexity, as you need to keep track of more variables and tre
 
    The `head` node often needs to be handled seperately because there is no node before it.
 
-## When `pre` node is referenced 
+## When `pre` node is needed: Dummy node to the rescue
 
-Sometimes you need to keep a reference to the node immediately before the `cur` node you are working on, such as when removing all elements of a particular value from the list. The while loop would look like
+Sometimes you need to keep reference to the node immediately before the `cur` node you are working on, such as when removing all elements of a particular value from the list. The while loop would look like
 
 ```c
 while (cur){
@@ -71,9 +71,90 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
 }
 ```
 
-## When 
+## When `after` node is needed: Reverse, swap the list
 
+Sometimes you need to keep reference to the node after the `cur` node you are working on, such as when reversing the list. This is because you lose what comes after the current node as part of the reversing operation.
 
+I prefer to initialize `after` node in the while loop so my loop condition is short.
+
+#### 206. Reverse Linked List
+
+**Input**: 1->2->3->4->5->NULL
+
+**Output**: 5->4->3->2->1->NULL
+
+```c
+struct ListNode* reverseList(struct ListNode* head) {
+    struct ListNode* pre = NULL;
+    struct ListNode* cur = head;
+   
+    while (cur){
+        struct ListNode* after = cur->next;	// for later reference
+        cur->next = pre;										// reverse cur and pre in each iteration
+      
+        prev = cur;
+        cur = after;
+    }
+    return pre;
+}
+```
+
+I often find that for such problems, the recursive solution is a bit easier to remember. 
+
+```c
+struct ListNode* reverseList(struct ListNode* head) {
+    if (head == NULL || head->next == NULL){
+        return head;
+    }
+    
+    struct ListNode* tail = reverseList(head->next);
+  
+    // suppose the original list is 1->2->3->4->5->NULL
+  	// after recursion, tail is 5->4->3->2->NULL, head is 1->2
+    head->next->next = head;
+    head->next = NULL;
+    return tail;
+}
+```
+
+#### 24. Swap Node in Pairs
+
+**Input**: 1->2->3->4
+
+**Output**: 2->1->4->3
+
+```c
+struct ListNode* swapPairs(struct ListNode* head){
+    struct ListNode dummy = {-1, head};
+    struct ListNode* pre = &dummy;
+    struct ListNode* cur = head;
+    
+    while(cur && cur->next){
+        struct ListNode* after = cur->next;
+        cur->next = after->next;
+        pre->next = after;
+        after->next = cur;
+        
+        pre = pre->next->next;
+        cur = pre->next;
+        
+    }
+    return dummy.next;
+}
+```
+
+```c
+struct ListNode* swapPairs(struct ListNode* head) {
+    if (head==NULL || head->next == NULL)
+        return head;
+    
+    struct ListNode* rest = swapPairs(head->next->next);
+    struct ListNode* newhead = head->next;
+    newhead->next = head;
+    head->next = rest;
+    return newhead;
+}
+```
 
 ## Examples
 
