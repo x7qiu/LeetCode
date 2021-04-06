@@ -255,8 +255,8 @@ Given a linked list, return the node where the cycle begins. If there is no cycl
 
 Suppose we have run the tortoise and hare algorithm and they meet at the meeting point as shown in the image. Note that the tortoise is guranteed to be caught up by the hare within one cycle after it enters the cycle. But the hare could have travelled the cycle `m` times before the tortoise enters the cycle. Then we have:
 
-- Distance run by tortoise: x+y
-- Distance run by hare: x+m(y+z)+y
+- Distance run by tortoise: `x+y`
+- Distance run by hare: `x+m(y+z)+y`
 
 Since the hare has been running at twice the speed of the tortoise, we have:
 $$
@@ -266,10 +266,87 @@ Sovling for x gives:
 $$
 x=(m−1)(y+z)+z
 $$
-What this tells us is that in another scenario, if we have two pinters, one starting at the head of the list and the other starting at somewhere in the cycle and running at the same speed. Then by the time the first pointer enters the cycle (aka travelled a distance of x), the second pointer will have moved forward a distance of z relative to its starting position.
+
+- LHS is the distance from head to the start of the cycle.
+- RHS is the distance from meeting point to the start of the cycle, plus `m-1` cycles.
 
 Now it should be clear why the following algorithm works:
 
-1. Run the tortoise and hare algorithm. Now both slow and fast pointer are at the meeting point as showin in the image.
-2. Move the slow pointer to the beginning of the list again. Set the fast pointer to be running at the same speed as the slow pointer.
-3. Move both pointer in parallel until they meet. The new meeting point would be at the start of the cycle.
+1. Run the tortoise and hare algorithm. Now both slow and fast pointer are at the meeting point.
+2. Move the slow pointer to the head of the list again. Set the fast pointer to be running at the same speed as the slow pointer.
+3. Move both pointer in parallel until they meet. They meet at the start of the cycle.
+
+```c
+struct ListNode *detectCycle(struct ListNode *head) {
+    struct ListNode* slow, *fast;
+    slow = head, fast = head;   
+ 
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+        
+        if (slow == fast){
+            slow = head;
+            while(slow != fast){
+                slow = slow->next;
+                fast = fast->next;
+            }
+            return slow;
+        }
+    }
+    return NULL;
+}
+```
+
+#### 876. Middle of the Linked List
+
+Return the middle node of a linked list. If there are two middle nodes, return the second one.
+
+```c
+struct ListNode* middleNode(struct ListNode* head) {
+    if (head == NULL || head->next == NULL)
+        return head;
+    struct ListNode* slow, *fast;
+    slow = head, fast = head;
+
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+```
+
+#### 160. Intersection oof Two Linked Lists
+
+Write a program to find the node at which the intersection of two singly linked lists begins.
+
+- If the two linked lists have no intersection at all, return null.
+- You may assume there are no cycles anywhere in the entire linked structure.
+
+1. Traverse the lists and compute their lengths, called it `lenA` and `lenB`
+2. Move the head of the longer list `abs(lenA-lenB)` nodes ahead, so that now headA and headB are sitting at the same distance from tail
+3. Traverse headA and headB in parallel and compare the address of each node along the way. If they are equal, it is the intersection point
+
+```python
+def getIntersectionNode(headA, headB):
+        curA,curB = headA,headB
+        lenA,lenB = 0,0
+        while curA is not None:
+            lenA += 1
+            curA = curA.next
+        while curB is not None:
+            lenB += 1
+            curB = curB.next
+        curA,curB = headA,headB
+        if lenA > lenB:
+            for i in range(lenA-lenB):
+                curA = curA.next
+        elif lenB > lenA:
+            for i in range(lenB-lenA):
+                curB = curB.next
+        while curA and id(curA) != id(curB):
+            curA = curA.next
+            curB = curB.next
+        return curA
+```
+
