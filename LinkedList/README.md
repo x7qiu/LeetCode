@@ -18,7 +18,7 @@ This brings code complexity, as you need to keep track of more variables and tre
 
    Once we have the inside of the loop from above, we break out when one of the referenced node reaches a `NULL` state. 
 
-   This will usually be the `cur` node, but exceptions exsist. For example, if we referenced`cur->next->value` in the loop, we must break out of the loop when `cur->next` is `NULL`.
+   This will usually be the `cur` node, but exceptions exsist. For example, if we referenced`cur->next->value` or `cur->next->next` in the loop, we must break out of the loop when `cur->next` is `NULL`.
 
 3. **Handle edge cases**
 
@@ -90,7 +90,7 @@ struct ListNode* reverseList(struct ListNode* head) {
    
     while (cur){
         struct ListNode* after = cur->next;	// for later reference
-        cur->next = pre;										// reverse cur and pre in each iteration
+        cur->next = pre;	// reverse cur and pre in each iteration
       
         prev = cur;
         cur = after;
@@ -109,7 +109,7 @@ struct ListNode* reverseList(struct ListNode* head) {
     
     struct ListNode* tail = reverseList(head->next);
   
-    // suppose the original list is 1->2->3->4->5->NULL
+  	// suppose the original list is 1->2->3->4->5->NULL
   	// after recursion, tail is 5->4->3->2->NULL, head is 1->2
     head->next->next = head;
     head->next = NULL;
@@ -209,7 +209,7 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
     while(cur && cur->next){
         if (cur->val == cur->next->val){
             while(cur->next && cur->next->val == cur->val){
-                cur = cur->next;			# find the last node with duplicate value
+                cur = cur->next;	# find the last node with duplicate value
             }
             pre->next = cur->next;
           	cur = cur->next;
