@@ -14,7 +14,7 @@ This brings code complexity, as you need to keep track of more variables and tre
 
    In this step we ignore edge cases and focus on the body of the list. A `cur` node, initialized as the `head` node before entering the loop, will always be the current node that we are working on.
 
-2. **Decide the break point for the loop**
+2. **Decide the break condition for the loop**
 
    Once we have the inside of the loop from above, we break out when one of the referenced node reaches a `NULL` state. 
 
@@ -59,12 +59,83 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
     
     while(cur){
         if(cur->val == val){
-          pre->next = cur->next;
-        	cur = cur->next;
+          	pre->next = cur->next;
+        		cur = cur->next;
         }
         else{
-          pre = pre->next;
-          cur = cur->next;
+          	pre = cur;
+          	cur = cur->next;
+        }
+    }
+    return dummy.next;
+}
+```
+
+## When 
+
+
+
+## Examples
+
+#### 83. Remove Duplicates from Sorted List
+
+Given a sorted linked list, remove all duplicates such that each element appears only once.
+
+**Input**: 1->1->2->3->3
+
+**Output**: 1->2->3
+
+```c
+ListNode* deleteDuplicates(ListNode* head) {
+    ListNode *cur = head;
+    while (cur && cur->next) {
+        if (cur->val == cur->next->val)
+            cur->next = cur->next->next;
+
+        cur = cur->next;
+    }
+    return head;
+}
+```
+
+```c
+struct ListNode* deleteDuplicates(struct ListNode* head) {
+    if (head == NULL || head->next == NULL)
+        return head;
+    
+    struct ListNode* rest = deleteDuplicates(head->next);
+    if (head->val == rest->val){
+        head->next = rest->next;
+    }
+    return head;
+}
+```
+
+#### 82. Remove Duplicates From Sorted List II
+
+Given a sorted linked list, remove all nodes that have duplicate elements.
+
+**Input**: 1->2->3->3->4->4->5
+
+**Output**: 1->2->5
+
+```c
+struct ListNode* deleteDuplicates(struct ListNode* head){
+    struct ListNode dummy = {-1, head};
+    struct ListNode* pre = &dummy;
+    struct ListNode* cur = head;
+    
+    while(cur && cur->next){
+        if (cur->val == cur->next->val){
+            while(cur->next && cur->next->val == cur->val){
+                cur = cur->next;			# find the last node with duplicate value
+            }
+            pre->next = cur->next;
+          	cur = cur->next;
+        }
+        else{
+            pre = cur;
+            cur = cur->next;
         }
     }
     return dummy.next;
