@@ -156,7 +156,31 @@ struct ListNode* swapPairs(struct ListNode* head) {
 }
 ```
 
-## Examples
+## Two Pointers
+
+#### 141. Linked List Cycle
+
+Given a linked list, determine if it has a cycle in it.
+
+```c
+bool hasCycle(struct ListNode *head) {
+    struct ListNode* slow, *fast;
+    slow = head, fast = head;
+
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast)
+            return true;
+    }
+    return false;  
+}
+```
+
+Suppose a cycle exists, then by the time the slow pointer is in it, the fast pointer will already be somewhere inside. From that point, the fast pointer will be catching up to the slow one in the cycle. Since the fast pointer is running twice as fast, it is guarantueed to be one step closer each loop, eventually meeting the slow pointer.
+
+## Other Solved Problems
 
 #### 83. Remove Duplicates from Sorted List
 
@@ -223,3 +247,29 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
 }
 ```
 
+#### 142. Linked List Cycle II
+
+Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+
+![detect-loop-start](./images/detect-loop-start.png)
+
+Suppose we have run the tortoise and hare algorithm and they meet at the meeting point as shown in the image. Note that the tortoise is guranteed to be caught up by the hare within one cycle after it enters the cycle. But the hare could have travelled the cycle `m` times before the tortoise enters the cycle. Then we have:
+
+- Distance run by tortoise: x+y
+- Distance run by hare: x+m(y+z)+y
+
+Since the hare has been running at twice the speed of the tortoise, we have:
+$$
+2(x+y)=x+m(y+z)+y
+$$
+Sovling for x gives:
+$$
+x=(m−1)(y+z)+z
+$$
+What this tells us is that in another scenario, if we have two pinters, one starting at the head of the list and the other starting at somewhere in the cycle and running at the same speed. Then by the time the first pointer enters the cycle (aka travelled a distance of x), the second pointer will have moved forward a distance of z relative to its starting position.
+
+Now it should be clear why the following algorithm works:
+
+1. Run the tortoise and hare algorithm. Now both slow and fast pointer are at the meeting point as showin in the image.
+2. Move the slow pointer to the beginning of the list again. Set the fast pointer to be running at the same speed as the slow pointer.
+3. Move both pointer in parallel until they meet. The new meeting point would be at the start of the cycle.
