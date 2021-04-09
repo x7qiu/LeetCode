@@ -63,7 +63,7 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
         		cur = cur->next;
         }
         else{
-          	pre = cur;
+          	pre = pre->next;
           	cur = cur->next;
         }
     }
@@ -158,29 +158,58 @@ struct ListNode* swapPairs(struct ListNode* head) {
 
 ## Two Pointers
 
-#### 141. Linked List Cycle
+There is another class of linked list problems that asks you not to modify the original list, but to identify a specific node of interest (midpoint, start of cycle, etc) or determin if the list has a certain quality, i.e. if it is palindrome.
 
-Given a linked list, determine if it has a cycle in it.
+Almost all of the node identification problems requires you to keep reference to more than one pointers to do it in a single pass. Belows is a simple example. 
+
+#### 876. Middle of the Linked List
+
+Return the middle node of a linked list. If there are two middle nodes, return the second one.
 
 ```c
-bool hasCycle(struct ListNode *head) {
+struct ListNode* middleNode(struct ListNode* head) {
+    if (head == NULL || head->next == NULL)
+        return head;
     struct ListNode* slow, *fast;
     slow = head, fast = head;
 
     while(fast && fast->next){
         slow = slow->next;
         fast = fast->next->next;
-
-        if (slow == fast)
-            return true;
     }
-    return false;  
-}
+    return slow;
 ```
 
-Suppose a cycle exists, then by the time the slow pointer is in it, the fast pointer will already be somewhere inside. From that point, the fast pointer will be catching up to the slow one in the cycle. Since the fast pointer is running twice as fast, it is guarantueed to be one step closer each loop, eventually meeting the slow pointer.
+If the task is to determine if a linked list has certain quality, the simpliest approach is to construct an array with the same elements. 
 
-## Other Solved Problems
+#### 234. Palindrome Linked List
+
+Given the head of a linked list, return true if it is a palindrome.
+
+**Input**: 1->2->2->1->NULL
+
+**Output**: true
+
+```python
+def isPalindrome(self, head):
+    vals = []
+    while head:
+        vals.append(head.val)
+        head = head.next
+    return vals == vals[::-1]
+```
+
+But sometimes this approach is forbidden, or there is an additional requirement of O(1) space. In such cases our best bet is to combine two-pointer tricks with list modification. i.e. we can identify the middle node, reverse either half of the list and then compare if they are the same. However, the reverse operation is destructive to the original list.
+
+
+
+
+
+
+
+
+
+## Solved Problems
 
 #### 83. Remove Duplicates from Sorted List
 
@@ -193,7 +222,7 @@ Given a sorted linked list, remove all duplicates such that each element appears
 ```c
 ListNode* deleteDuplicates(ListNode* head) {
     ListNode *cur = head;
-    while (cur && cur->next) {
+    while (cur && cur->next) {	# cur->next because we referenced cur->next->val in loop
         if (cur->val == cur->next->val)
             cur->next = cur->next->next;
 
@@ -232,20 +261,43 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
     
     while(cur && cur->next){
         if (cur->val == cur->next->val){
+          # find the last node with duplicate value
             while(cur->next && cur->next->val == cur->val){
-                cur = cur->next;	# find the last node with duplicate value
+                cur = cur->next;	
             }
             pre->next = cur->next;
           	cur = cur->next;
         }
         else{
-            pre = cur;
+            pre = pre->next;
             cur = cur->next;
         }
     }
     return dummy.next;
 }
 ```
+
+#### 141. Linked List Cycle
+
+Given a linked list, determine if it has a cycle in it.
+
+```c
+bool hasCycle(struct ListNode *head) {
+    struct ListNode* slow, *fast;
+    slow = head, fast = head;
+
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast)
+            return true;
+    }
+    return false;  
+}
+```
+
+Suppose a cycle exists, then by the time the slow pointer is in it, the fast pointer will already be somewhere inside. From that point, the fast pointer will be catching up to the slow one in the cycle. Since the fast pointer is running twice as fast, it is guarantueed to be one step closer each loop, eventually meeting the slow pointer.
 
 #### 142. Linked List Cycle II
 
@@ -298,24 +350,6 @@ struct ListNode *detectCycle(struct ListNode *head) {
 }
 ```
 
-#### 876. Middle of the Linked List
-
-Return the middle node of a linked list. If there are two middle nodes, return the second one.
-
-```c
-struct ListNode* middleNode(struct ListNode* head) {
-    if (head == NULL || head->next == NULL)
-        return head;
-    struct ListNode* slow, *fast;
-    slow = head, fast = head;
-
-    while(fast && fast->next){
-        slow = slow->next;
-        fast = fast->next->next;
-    }
-    return slow;
-```
-
 #### 160. Intersection oof Two Linked Lists
 
 Write a program to find the node at which the intersection of two singly linked lists begins.
@@ -349,4 +383,6 @@ def getIntersectionNode(headA, headB):
             curB = curB.next
         return curA
 ```
+
+
 
