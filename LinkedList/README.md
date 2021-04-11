@@ -6,7 +6,7 @@ Most linked list algorithms are logially straightforward. The main difficult lie
 
 
 
-This brings code complexity, as you need to keep track of more variables and treat special cases carefully. The head node obviously has no previous node and the last `NULL` node has nothing after it. I usually approach a problem in the following steps:
+This brings code complexity, as you need to keep track of more variables and treat special cases carefully. The head node obviously has no previous node and the last `NULL` node has nothing after it.  Recursive solutions often exist and are easier to reason about, but bring up the space complexity to O(n). For an iterative solution, I usually formulate it with the following steps:
 
 
 
@@ -98,8 +98,6 @@ struct ListNode* reverseList(struct ListNode* head) {
     return pre;
 }
 ```
-
-I often find that for such problems, the recursive solution is a bit easier to remember. 
 
 ```c
 struct ListNode* reverseList(struct ListNode* head) {
@@ -215,18 +213,21 @@ But sometimes this approach is forbidden, or there is an additional requirement 
 
 Given a sorted linked list, remove all duplicates such that each element appears only once.
 
-**Input**: 1->1->2->3->3
+**Input**: 1->1->1->2->3->3
 
 **Output**: 1->2->3
 
 ```c
-ListNode* deleteDuplicates(ListNode* head) {
-    ListNode *cur = head;
-    while (cur && cur->next) {	# cur->next because we referenced cur->next->val in loop
-        if (cur->val == cur->next->val)
+struct ListNode* deleteDuplicates(struct ListNode* head) {
+    struct ListNode *cur = head;
+    while (cur && cur->next) {
+        if (cur->val == cur->next->val){
+          	//remove cur->next, and do not move cur forward
             cur->next = cur->next->next;
-
-        cur = cur->next;
+        }
+				else{
+        		cur = cur->next;
+        }
     }
     return head;
 }
