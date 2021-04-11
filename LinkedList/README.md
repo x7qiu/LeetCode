@@ -219,14 +219,14 @@ Given a sorted linked list, remove all duplicates such that each element appears
 
 ```c
 struct ListNode* deleteDuplicates(struct ListNode* head) {
-		struct ListNode *cur = head;
-		while (cur && cur->next) {
+	struct ListNode *cur = head;
+	while (cur && cur->next) {
     		if (cur->val == cur->next->val){
-       			//remove cur->next, and do not move cur forward
-        		cur->next = cur->next->next;
+       		//remove cur->next, and do not move cur forward
+        	cur->next = cur->next->next;
         }
       	else{
-        		cur = cur->next;
+        	cur = cur->next;
       	}
     }
     return head;
