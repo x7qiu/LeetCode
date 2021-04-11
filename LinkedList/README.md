@@ -58,9 +58,9 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
     struct ListNode* cur = head;
     
     while(cur){
-        if(cur->val == val){
-          	pre->next = cur->next;
-        		cur = cur->next;
+    	if(cur->val == val){
+        	pre->next = cur->next;
+        	cur = cur->next;
         }
         else{
           	pre = pre->next;
@@ -90,7 +90,7 @@ struct ListNode* reverseList(struct ListNode* head) {
    
     while (cur){
         struct ListNode* after = cur->next;	// for later reference
-        cur->next = pre;	// reverse cur and pre in each iteration
+        cur->next = pre;			// reverse cur and pre in each iteration
       
         prev = cur;
         cur = after;
@@ -107,8 +107,8 @@ struct ListNode* reverseList(struct ListNode* head) {
     
     struct ListNode* tail = reverseList(head->next);
   
-  	// suppose the original list is 1->2->3->4->5->NULL
-  	// after recursion, tail is 5->4->3->2->NULL, head is 1->2
+    // suppose the original list is 1->2->3->4->5->NULL
+    // after recursion, tail is 5->4->3->2->NULL, head is 1->2
     head->next->next = head;
     head->next = NULL;
     return tail;
@@ -222,7 +222,7 @@ struct ListNode* deleteDuplicates(struct ListNode* head) {
 	struct ListNode *cur = head;
 	while (cur && cur->next) {
     		if (cur->val == cur->next->val){
-       		//remove cur->next, and do not move cur forward
+       		//remove cur->next; do not move cur forward
         	cur->next = cur->next->next;
         }
       	else{
