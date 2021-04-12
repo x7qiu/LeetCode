@@ -12,17 +12,17 @@ This brings code complexity, as you need to keep track of more variables and tre
 
 1. **Design the inside of `while` loop**
 
-   In this step we ignore edge cases and focus on the body of the list. A `cur` node, initialized as the `head` node before entering the loop, will always be the current node that we are working on.
+   In this step we ignore edge cases and focus on the body of the list. A `cur` node, initialized as the `head` node before entering the loop, will always be the current node that we are looking at.
 
 2. **Decide the break condition for the loop**
 
-   Once we have the inside of the loop from above, we break out when one of the referenced node reaches a `NULL` state. 
+   Once we have the inside of the loop from above, we break out when one of the referenced node reaches  `NULL`. 
 
    This will usually be the `cur` node, but exceptions exsist. For example, if we referenced`cur->next->value` or `cur->next->next` in the loop, we must break out of the loop when `cur->next` is `NULL`.
 
 3. **Handle edge cases**
 
-   The `head` node often needs to be handled seperately because there is no node before it.
+   The `head` node needs to be handled seperately if we referenced a `pre` node inside the loop, because `head` has no previous node. Similary, if we break out of the loop before `cur` reaches `NULL`, the last nodes need to be handled on its own. 
 
 ## When `pre` node is needed: Dummy node to the rescue
 
@@ -47,9 +47,9 @@ It's a common trick to construct a dummy node to handle such edge cases. The ide
 
 #### 203. Remove Linked List Elements
 
-**Input**: 1->2->6->3->4->5->6, val = 6   
+* **Input**: 1->2->6->3->4->5->6->NULL, val = 6   
 
-**Output**: 1->2->3->4->5
+* **Output**: 1->2->3->4->5->NULL
 
 ```c
 struct ListNode* removeElements(struct ListNode* head, int val) {
@@ -79,9 +79,9 @@ I prefer to initialize `after` node in the while loop so my loop condition is sh
 
 #### 206. Reverse Linked List
 
-**Input**: 1->2->3->4->5->NULL
+* **Input**: 1->2->3->4->5->NULL
 
-**Output**: 5->4->3->2->1->NULL
+* **Output**: 5->4->3->2->1->NULL
 
 ```c
 struct ListNode* reverseList(struct ListNode* head) {
@@ -117,9 +117,9 @@ struct ListNode* reverseList(struct ListNode* head) {
 
 #### 24. Swap Node in Pairs
 
-**Input**: 1->2->3->4
+* **Input**: 1->2->3->4->NULL
 
-**Output**: 2->1->4->3
+* **Output**: 2->1->4->3->NULL
 
 ```c
 struct ListNode* swapPairs(struct ListNode* head){
@@ -184,9 +184,9 @@ If the task is to determine if a linked list has certain quality, the simpliest 
 
 Given the head of a linked list, return true if it is a palindrome.
 
-**Input**: 1->2->2->1->NULL
+* **Input**: 1->2->2->1->NULL
 
-**Output**: true
+* **Output**: true
 
 ```python
 def isPalindrome(self, head):
@@ -213,9 +213,11 @@ But sometimes this approach is forbidden, or there is an additional requirement 
 
 Given a sorted linked list, remove all duplicates such that each element appears only once.
 
-**Input**: 1->1->1->2->3->3
+* **Input**: 1->1->1->2->3->3->NULL
 
-**Output**: 1->2->3
+* **Output**: 1->2->3->NULL
+
+We never need to remvoe the current node so there is no need for dummy node. For current node, compare its value to the next node and **remove the next node** if they are the same. Only move the current node forward if the their node has distict value.
 
 ```c
 struct ListNode* deleteDuplicates(struct ListNode* head) {
@@ -233,26 +235,15 @@ struct ListNode* deleteDuplicates(struct ListNode* head) {
 }
 ```
 
-```c
-struct ListNode* deleteDuplicates(struct ListNode* head) {
-    if (head == NULL || head->next == NULL)
-        return head;
-    
-    struct ListNode* rest = deleteDuplicates(head->next);
-    if (head->val == rest->val){
-        head->next = rest->next;
-    }
-    return head;
-}
-```
+Since we broke out of the loop when `cur->next` is `NULL`, we need to examine if the last node needs to be handled seperately. 
 
 #### 82. Remove Duplicates From Sorted List II
 
 Given a sorted linked list, remove all nodes that have duplicate elements.
 
-**Input**: 1->2->3->3->4->4->5
+* **Input**: 1->2->3->3->4->4->5->NULL
 
-**Output**: 1->2->5
+* **Output**: 1->2->5->NULL
 
 ```c
 struct ListNode* deleteDuplicates(struct ListNode* head){
@@ -277,6 +268,14 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
     return dummy.next;
 }
 ```
+
+Instead of thinking about when to remove nodes from the original list, we can also contruct a new list and think about when to add nodes to it.
+
+```c
+
+```
+
+
 
 #### 141. Linked List Cycle
 
