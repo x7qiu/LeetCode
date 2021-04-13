@@ -221,15 +221,15 @@ We never need to remvoe the current node so there is no need for dummy node. For
 
 ```c
 struct ListNode* deleteDuplicates(struct ListNode* head) {
-	struct ListNode *cur = head;
-	while (cur && cur->next) {
-    		if (cur->val == cur->next->val){
-       		//remove cur->next; do not move cur forward
-        	cur->next = cur->next->next;
+    struct ListNode *cur = head;
+    while (cur && cur->next) {
+        if (cur->val == cur->next->val){
+       	//remove cur->next; do not move cur forward
+        cur->next = cur->next->next;
         }
-      	else{
-        	cur = cur->next;
-      	}
+        else{
+            cur = cur->next;
+        }
     }
     return head;
 }
