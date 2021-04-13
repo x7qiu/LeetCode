@@ -257,6 +257,7 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
             while(cur->next && cur->next->val == cur->val){
                 cur = cur->next;	
             }
+          # break out when cur needs to be deleted i.e. cur->next has a distinct value
             pre->next = cur->next;
           	cur = cur->next;
         }
@@ -269,13 +270,38 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
 }
 ```
 
-Instead of thinking about when to remove nodes from the original list, we can also contruct a new list and think about when to add nodes to it.
+Instead of thinking about when to remove nodes from the original list, we can also contruct a new list and think about when to add unique nodes to it.
 
 ```c
+struct ListNode* deleteDuplicates(struct ListNode* head){
+    if (!head) return NULL;
 
+    // needs a dummy node for 'pre'; ensures it has different value from head
+    struct ListNode dummy = {head->val -1, head};   
+    struct ListNode* pre = &dummy;
+    struct ListNode* cur = head;
+    
+    // add distinct nodes to this new list
+    struct ListNode* newList = &dummy; 
+    
+    while(cur){
+        if (cur->val != pre->val && (cur->next == NULL || cur->val != cur->next->val)){
+            // this is a unique node. Add to the new list
+            newList->next = cur;
+            newList = newList->next;
+        }
+        pre = pre->next;
+        cur = cur->next;
+    }
+    
+    // end of new list
+    newList->next = NULL;
+    
+    return dummy.next;
+}
 ```
 
-
+Note that in the loop condition is simplay `while(cur)` even though we are referencing `cur->next` in the loop body. The inclusion of `cur->next == NULL` in the `if` condition is necessary to make the code concise. Otherwise the last node will needs to be handled seperately. 
 
 #### 141. Linked List Cycle
 
