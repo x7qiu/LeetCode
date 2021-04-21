@@ -73,9 +73,9 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
 
 ## When `after` node is needed: Reverse, swap the list
 
-Sometimes you need to keep reference to the node after the `cur` node you are working on, such as when reversing the list. This is because you lose what comes after the current node as part of the reversing operation.
+Sometimes you need to keep reference to the node after the `cur` node if your code reassigns `cur->next`, such as reversing the list.
 
-I prefer to initialize `after` node in the while loop so my loop condition is short.
+I prefer to initialize `after` node in the loop body so my break condition is short.
 
 #### 206. Reverse Linked List
 
@@ -156,9 +156,7 @@ struct ListNode* swapPairs(struct ListNode* head) {
 
 ## Two Pointers
 
-There is another class of linked list problems that asks you not to modify the original list, but to identify a specific node of interest (midpoint, start of cycle, etc) or determin if the list has a certain quality, i.e. if it is palindrome.
-
-Almost all of the node identification problems requires you to keep reference to more than one pointers to do it in a single pass. Belows is a simple example. 
+Since you cannot go back in a singly linked list, sometimes it's useful to keep reference of two or more pointers to make certain tasks easier.
 
 #### 876. Middle of the Linked List
 
@@ -178,33 +176,6 @@ struct ListNode* middleNode(struct ListNode* head) {
     return slow;
 ```
 
-If the task is to determine if a linked list has certain quality, the simpliest approach is to construct an array with the same elements. 
-
-#### 234. Palindrome Linked List
-
-Given the head of a linked list, return true if it is a palindrome.
-
-* **Input**: 1->2->2->1->NULL
-
-* **Output**: true
-
-```python
-def isPalindrome(self, head):
-    vals = []
-    while head:
-        vals.append(head.val)
-        head = head.next
-    return vals == vals[::-1]
-```
-
-But sometimes this approach is forbidden, or there is an additional requirement of O(1) space. In such cases our best bet is to combine two-pointer tricks with list modification. i.e. we can identify the middle node, reverse either half of the list and then compare if they are the same. However, the reverse operation is destructive to the original list.
-
-
-
-
-
-
-
 
 
 ## Solved Problems
@@ -217,7 +188,7 @@ Given a sorted linked list, remove all duplicates such that each element appears
 
 * **Output**: 1->2->3->NULL
 
-We never need to remvoe the current node so there is no need for dummy node. For current node, compare its value to the next node and **remove the next node** if they are the same. Only move the current node forward if the their node has distict value.
+We never need to remvoe the current node so there is no need for dummy node. For current node, compare its value to the next node and **remove the next node** if they are the same. Only move the current node forward if the next code has a different value.
 
 ```c
 struct ListNode* deleteDuplicates(struct ListNode* head) {
@@ -301,7 +272,13 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
 }
 ```
 
-Note that in the loop condition is simplay `while(cur)` even though we are referencing `cur->next` in the loop body. The inclusion of `cur->next == NULL` in the `if` condition is necessary to make the code concise. Otherwise the last node will needs to be handled seperately. 
+Note that in the loop condition is simplay `while(cur)` even though we are referencing `cur->next->val` in the loop body. That and the inclusion of `cur->next == NULL` in the `if` condition is necessary to make the code concise because it takes care of the last node (before NULL). 
+
+If the loop condition is `while(cur && cur->next)` like we normally do, then the loop break at the last node and we will have to handle it seperately.
+
+#### Todo
+
+WHY is it that the last node needs special handling here, but not previous examples?
 
 #### 141. Linked List Cycle
 
@@ -373,6 +350,50 @@ struct ListNode *detectCycle(struct ListNode *head) {
         }
     }
     return NULL;
+}
+```
+
+#### 234. Palindrome Linked List
+
+Given the head of a linked list, return true if it is a palindrome.
+
+* **Input**: 1->2->2->1->NULL
+
+* **Output**: true
+
+```python
+def isPalindrome(self, head):
+    vals = []
+    while head:
+        vals.append(head.val)
+        head = head.next
+    return vals == vals[::-1]
+```
+
+Sometimes this approach is forbidden for some made-up reasons, or O(1) extra space is required. In such cases we can combine techniques we've seen so far. e.g. for this problem we can identify the middle node, reverse either half of the list and then compare if they are the same. However, the reverse operation is destructive to the original list.
+
+There is also a recursive solution to this problem, which takes O(n) extra space, does not destory the original list, and is quite pleasing to the eye. It's unlikely I will ever come up with it on my own during an interview, but finding such cleaver use of recursion is what makes the fked up interview process less miserable.
+
+```c
+bool isPalindrome(struct ListNode* head){
+    struct ListNode* front = head;
+    return helper(&front, head);
+}
+
+bool helper(struct ListNode** front, struct ListNode* back){
+    if (back == NULL)   return true;
+    
+    // let back pointer travels to the end of the list through recursion;
+    bool equal_so_far = helper(front, back->next);
+    
+    // *front and back should have the same value
+    bool value_equal = (back->val == (*front)->val);
+    
+    // when the functions returns, back is gradually moved towards head of the list 
+    // so we need to move front accordingly to compare their values
+    // front must be global or passed in by refernece so that the change is not lost
+    *front = (*front)->next;
+    return equal_so_far && value_equal;
 }
 ```
 
