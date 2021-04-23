@@ -225,11 +225,11 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
     
     while(cur && cur->next){
         if (cur->val == cur->next->val){
-          # find the last node with duplicate value
+          // find the last node with duplicate value
             while(cur->next && cur->next->val == cur->val){
                 cur = cur->next;	
             }
-          # break out when cur needs to be deleted i.e. cur->next has a distinct value
+          // break out when cur needs to be deleted i.e. cur->next has a distinct value
             pre->next = cur->next;
           	cur = cur->next;
         }
