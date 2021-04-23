@@ -60,12 +60,12 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
     
     while(cur){
         if(cur->val == val){
-            pre->next = cur->next;
-        	   cur = cur->next;
+          pre->next = cur->next;
+        	 cur = cur->next;
         }
         else{
-          	pre = pre->next;
-          	cur = cur->next;
+         pre = pre->next;
+         cur = cur->next;
         }
     }
     return dummy.next;
@@ -91,7 +91,7 @@ struct ListNode* reverseList(struct ListNode* head) {
    
     while (cur){
         struct ListNode* after = cur->next;	// for later reference
-        cur->next = pre;			// reverse cur and pre in each iteration
+        cur->next = pre;			            // reverse cur and pre
       
         prev = cur;
         cur = after;
