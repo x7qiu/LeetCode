@@ -31,7 +31,7 @@ Sometimes you need to keep reference to the node immediately before the `cur` no
 ```c
 while (cur){
     if(cur->val == 666){
-        // deleting current node
+        // delete current node
         pre->next = cur->next;		
         cur = cur->next;
     }
@@ -60,12 +60,12 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
     
     while(cur){
         if(cur->val == val){
-          pre->next = cur->next;
-        	 cur = cur->next;
+            pre->next = cur->next;
+        	   cur = cur->next;
         }
         else{
-         pre = pre->next;
-         cur = cur->next;
+            pre = pre->next;
+            cur = cur->next;
         }
     }
     return dummy.next;
